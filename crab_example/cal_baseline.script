@@ -1,0 +1,83 @@
+!/bin/rm -Rf CAL_BASELINE
+!mkdir CAL_BASELINE
+
+scube::remove_scan_baseline
+
+data_units COUNTS
+niter 3
+clip 5
+poldeg 1
+ftrim 0.1
+save yes
+ch_save 70-922
+steps doflag
+
+foreach dir (CROSS1 ) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s; feed $f
+
+infile CRAB.SCUBE/3C286_FEED$f_$dir
+outfile CAL_BASELINE/3C286_FEED$f_$dir_$s
+Inp; go
+}
+}
+}
+
+foreach dir ( CROSS1) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s; feed $f
+infile CRAB.SCUBE/3C84_FEED$f_$dir
+outfile CAL_BASELINE/3C84_FEED$f_$dir_$s
+Inp; go
+}
+}
+}
+
+foreach dir (CROSS1 CROSS2 CROSS3 CROSS4 CROSS5 CROSS6 CROSS7) {
+foreach f (0 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s
+feed $f
+
+infile CRAB.SCUBE/3C286_FEED$f_$dir
+outfile CAL_BASELINE/3C286_FEED$f_$dir_$s
+
+inp
+go
+}
+}
+}
+
+foreach dir (CROSS1 CROSS2 CROSS3 CROSS4 CROSS5 CROSS6 CROSS7 CROSS8 CROSS9 CROSS10) {
+foreach f (0 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s;
+feed $f
+infile CRAB.SCUBE/3C84_FEED$f_$dir
+outfile CAL_BASELINE/3C84_FEED$f_$dir_$s
+
+Inp; go
+}
+}
+}
+
+foreach dir (CROSS1 CROSS2 CROSS3 CROSS4 CROSS5) {
+foreach f (0 1 2 3 4 5 6) {
+foreach s ( LL RR Q U) {
+
+stokes $s; feed $f
+
+infile CRAB.SCUBE/MOON_FEED$f_$dir
+outfile CAL_BASELINE/MOON_FEED$f_$dir_$s
+
+Inp; go
+
+}
+}
+}

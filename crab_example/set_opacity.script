@@ -1,0 +1,14 @@
+!/bin/rm CRAB.SCUBE/OPACITY.tab
+
+scube::opacity
+infile CRAB.SCUBE/
+in2files 3C84_FEED0_CROSS1
+bscan 0
+escan end
+stokes RR LL
+data_units COUNTS
+steps ""
+scheme user_table
+table opacity.tab
+
+inp; go

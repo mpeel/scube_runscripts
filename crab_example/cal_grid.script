@@ -1,0 +1,51 @@
+!rm -Rf CALIB
+!mkdir CALIB
+
+scube::calib
+calsteps correct_elevation_gain correct_bpass correct_opacity
+gain_model Murgia_et_al_Kband_Mfeed_JUL15
+donorm_gain yes
+interpol elevation_2pt average time_2pt
+steps ""
+inp
+
+scube::grid_OTF_map
+data_units COUNTS
+nx 128
+ny 128
+xcell 15
+ycell 15
+bchan 70
+echan 922
+nchav all
+frame HOR
+
+steps doflag remove_baseline docalib select_chans
+
+foreach dir (CROSS1 ) {
+foreach f ( 0 1 2 3 4 5 6) {
+foreach s ( RR LL ) {
+
+stokes $s; feed $f
+
+infile CRAB.SCUBE/3C286_FEED$f_$dir
+outfile CALIB/3C286_FEED$f_$s_$dir
+
+Inp; go
+}
+}
+}
+
+frame EQ
+foreach dir ( CROSS2 CROSS3 CROSS4 CROSS5 CROSS6 CROSS7) {
+foreach f (0 ) {
+foreach s ( RR LL ) {
+
+stokes $s; feed $f
+
+infile CRAB.SCUBE/3C286_FEED$f_$dir
+outfile CALIB/3C286_FEED$f_$s_$dir
+Inp; go
+}
+}
+}

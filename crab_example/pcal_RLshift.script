@@ -1,0 +1,26 @@
+scube::pcal
+calsteps solve_RLphase_shift_calonoff
+infile CRAB.SCUBE
+
+solty mean
+ref_chan 450
+
+bdata 1
+edata end
+bchan 70
+echan 922
+nchav 0
+
+fwhm 47/60.0
+nu_ref 24.6e9
+dl -10
+dh 10
+dstep 0.001
+
+steps doflag select_chans
+
+foreach f (0 1 2 3 4 5 6) {
+feed $f
+in2files CRAB.SCUBE/CAL_FEED$f_ONOFF1
+inp; go
+}

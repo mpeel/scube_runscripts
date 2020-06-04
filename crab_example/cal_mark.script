@@ -1,0 +1,21 @@
+scube::calib
+
+bchan 70
+echan 922
+nchav all
+mark_model Mariotti_mfeed_kband
+
+calsteps solve_counts_to_kelvin
+steps doflag select_chans
+
+foreach f ( 0 1 2 3 4 5 6) {
+infile CRAB.SCUBE/CAL_FEED$f_ONOFF1
+infile += CRAB.SCUBE/CAL_FEED$f_ONOFF2
+
+feed $f
+stokes LL
+inp; go
+
+stokes RR
+inp; go
+}

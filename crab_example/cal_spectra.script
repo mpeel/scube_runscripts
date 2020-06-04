@@ -1,0 +1,32 @@
+!rm -Rf SPECTRA
+!mkdir SPECTRA
+
+scube::calib
+calsteps correct_elevation_gain correct_bpass correct_opacity correct_counts_to_jansky
+gain_model Murgia_et_al_Kband_Mfeed_JUL15
+donorm_gain yes
+interpol elevation_2pt average time_2pt time_2pt
+steps ""
+inp
+
+scube::extract_scan_spectrum
+save_waterfall yes
+waterfall_type mean
+data_units COUNTS
+xtype frequency
+ypix 0
+
+steps doflag remove_baseline docalib
+
+foreach f ( 0 1 2 3 4 5 6 ) {
+
+bscan 1
+escan end
+infile CRAB.SCUBE/3C286_FEED$f_CROSS1
+
+foreach s ( RR LL ) {
+stokes $s; feed $f
+outfile_prefix SPECTRA/SPECTRUM_3C286_FEED$f_$s
+inp; go
+}
+}

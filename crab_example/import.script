@@ -1,0 +1,75 @@
+scube::import_telescope_scan
+
+data_units COUNTS
+native_polarization circular
+backend ROACH2
+define disk RAW/
+outfile CRAB.SCUBE
+steps correct_FEED6_LR_swap
+
+foreach f (0 1 2 3 4 5 6) {
+feed $f
+board $f
+infile $disk/20190215-215622-42-18-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN1; inp; go
+}
+
+skip_bad_track no
+
+foreach f (0 1 2 3 4 5 6) {
+feed $f
+board $f
+infile $disk/20190215-215332-42-18-CAL_ONOFF; source CAL_FEED$f_ONOFF1; inp; go
+infile $disk/20190215-215348-42-18-CAL_ONOFF; source CAL_FEED$f_ONOFF2; inp; go
+}
+
+foreach f (0 1 2 3 4 5 6) {
+feed $f
+board $f
+infile $disk/20190215-200440-42-18-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS1; inp; go
+}
+
+board 0
+feed 0
+infile $disk/20190215-195013-42-18-3C84; source 3C84_FEED0_CROSS2; inp; go
+infile $disk/20190215-195228-42-18-3C84; source 3C84_FEED0_CROSS3; inp; go
+infile $disk/20190215-195338-42-18-3C84; source 3C84_FEED0_CROSS4; inp; go
+infile $disk/20190215-195948-42-18-3C84; source 3C84_FEED0_CROSS5; inp; go
+infile $disk/20190215-200057-42-18-3C84; source 3C84_FEED0_CROSS6; inp; go
+infile $disk/20190215-200206-42-18-3C84; source 3C84_FEED0_CROSS7; inp; go
+infile $disk/20190215-200315-42-18-3C84; source 3C84_FEED0_CROSS8; inp; go
+infile $disk/20190215-222554-42-18-3C84; source 3C84_FEED0_CROSS9; inp; go
+infile $disk/20190215-222702-42-18-3C84; source 3C84_FEED0_CROSS10; inp; go
+
+foreach f (0 1 2 3 4 5 6) {
+feed $f
+board $f
+infile $disk/20190215-220152-42-18-3C286_OPTIMIZED; source 3C286_FEED$f_CROSS1; inp; go
+}
+
+board 0
+feed 0
+infile $disk/20190215-220545-42-18-3C286; source 3C286_FEED0_CROSS2; inp; go
+infile $disk/20190215-220654-42-18-3C286; source 3C286_FEED0_CROSS3; inp; go
+infile $disk/20190215-220803-42-18-3C286; source 3C286_FEED0_CROSS4; inp; go
+infile $disk/20190215-220912-42-18-3C286; source 3C286_FEED0_CROSS5; inp; go
+infile $disk/20190215-221021-42-18-3C286; source 3C286_FEED0_CROSS6; inp; go
+infile $disk/20190215-221130-42-18-3C286; source 3C286_FEED0_CROSS7; inp; go
+
+foreach f (0 1 2 3 4 5 6) {
+feed $f
+board $f
+infile $disk/20190215-214136-42-18-MOON_CROSS; source MOON_FEED$f_CROSS1; inp; go
+infile $disk/20190215-214320-42-18-MOON_CROSS; source MOON_FEED$f_CROSS2; inp; go
+infile $disk/20190215-214503-42-18-MOON_CROSS; source MOON_FEED$f_CROSS3; inp; go
+infile $disk/20190215-214646-42-18-MOON_CROSS; source MOON_FEED$f_CROSS4; inp; go
+infile $disk/20190215-214829-42-18-MOON_CROSS; source MOON_FEED$f_CROSS5; inp; go
+}
+
+foreach f (0 1 2 3 4 5 6) {
+feed $f
+board $f
+infile $disk/20190215-201019-42-18-CRAB_RA; source CRAB_FEED$f_RA1; inp; go
+infile $disk/20190215-203240-42-18-CRAB_DEC; source CRAB_FEED$f_DEC1; inp; go
+infile $disk/20190215-205501-42-18-CRAB_RA; source CRAB_FEED$f_RA2; inp; go
+infile $disk/20190215-211723-42-18-CRAB_DEC; source CRAB_FEED$f_DEC2; inp; go
+}
