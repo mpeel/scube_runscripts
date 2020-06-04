@@ -7,56 +7,57 @@ define disk /scratch/rgs/srt/perseus/data/sardaraData/
 #define disk /Volumes/Toshiba5TB2/SRT/28-19/modified/K-band/
 outfile /scratch/mpeel/PERSEUS_K.SCUBE
 steps correct_FEED6_LR_swap
+overwrite_scans=yes
+
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
+# infile $disk/20191114/20191114-231659-28-19-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN1; inp; go
+# }
+
+# skip_bad_track no
+
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
+# infile $disk/20191114/20191114-231326-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF1; inp; go
+# infile $disk/20191114/20191114-231342-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF2; inp; go
+# }
+
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
+# infile $disk/20191114/20191114-203737-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS1; inp; go
+# infile $disk/20191114/20191114-204105-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS2; inp; go
+# }
+
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
+# infile $disk/20191114/20191114-232541-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS1; inp; go
+# infile $disk/20191114/20191114-232911-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS2; inp; go
+# infile $disk/20191114/20191114-233241-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS3; inp; go
+# }
+
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
+# infile $disk/20191114/20191114-233757-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS1; inp; go
+# infile $disk/20191114/20191114-234125-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS2; inp; go
+# infile $disk/20191114/20191114-234453-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS3; inp; go
+# }
+
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
+# infile $disk/20191114/20191114-204518-28-19-3C84_AZ; source 3C84_FEED$f_AZ1; inp; go
+# infile $disk/20191114/20191114-235249-28-19-3C84_EL; source 3C84_FEED$f_EL1; inp; go
+# }
 
 foreach f (0 1 2 3 4 5 6) {
 feed $f
 board $f
-infile $disk/20191114/20191114-231659-28-19-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN1; inp; go
-}
-
-skip_bad_track no
-
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
-infile $disk/20191114/20191114-231326-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF1; inp; go
-infile $disk/20191114/20191114-231342-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF2; inp; go
-}
-
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
-infile $disk/20191114/20191114-203737-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS1; inp; go
-infile $disk/20191114/20191114-204105-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS2; inp; go
-}
-
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
-infile $disk/20191114/20191114-232541-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS1; inp; go
-infile $disk/20191114/20191114-232911-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS2; inp; go
-infile $disk/20191114/20191114-233241-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS3; inp; go
-}
-
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
-infile $disk/20191114/20191114-233757-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS1; inp; go
-infile $disk/20191114/20191114-234125-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS2; inp; go
-infile $disk/20191114/20191114-234453-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS3; inp; go
-}
-
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
-infile $disk/20191114/20191114-204518-28-19-3C84_AZ; source 3C84_FEED$f_AZ1; inp; go
-infile $disk/20191114/20191114-235249-28-19-3C84_EL; source 3C84_FEED$f_EL1; inp; go
-}
-
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
-infile $disk/20191114/20191114-210632-28-19-PERSEUS_AZ; source PERSEUS_FEED$f_AZ1; inp; go
+# infile $disk/20191114/20191114-210632-28-19-PERSEUS_AZ; source PERSEUS_FEED$f_AZ1; inp; go
 infile $disk/20191114/20191114-223044-28-19-PERSEUS_AZ; source PERSEUS_FEED$f_AZ2; inp; go
 infile $disk/20191114/20191114-223356-28-19-PERSEUS_AZ; source PERSEUS_FEED$f_AZ3; inp; go
 }
