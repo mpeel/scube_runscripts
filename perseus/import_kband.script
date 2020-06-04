@@ -57,7 +57,7 @@ overwrite_scans yes
 foreach f (0 1 2 3 4 5 6) {
 feed $f
 board $f
-# infile $disk/20191114/20191114-210632-28-19-PERSEUS_AZ; source PERSEUS_FEED$f_AZ1; inp; go
+infile $disk/20191114/20191114-210632-28-19-PERSEUS_AZ; source PERSEUS_FEED$f_AZ1; inp; go
 infile $disk/20191114/20191114-223044-28-19-PERSEUS_AZ; source PERSEUS_FEED$f_AZ2; inp; go
 infile $disk/20191114/20191114-223356-28-19-PERSEUS_AZ; source PERSEUS_FEED$f_AZ3; inp; go
 }
