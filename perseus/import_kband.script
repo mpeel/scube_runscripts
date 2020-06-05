@@ -12,9 +12,9 @@ skip_bad_track no
 
 
 # Skydips
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
 # infile $disk/20191114/20191114-231659-28-19-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN01; inp; go
 # infile $disk/20191115/20191115-231826-28-19-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN02; inp; go
 # infile $disk/20191115/20191115-235553-28-19-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN03; inp; go
@@ -27,13 +27,13 @@ board $f
 # infile $disk/20191207/20191207-213056-28-19-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN10; inp; go
 # infile $disk/20191207/20191207-222815-28-19-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN11; inp; go
 # infile $disk/20191208/20191208-214603-28-19-SKYDIP_KBAND; source SKYDIP_FEED$f_SCAN12; inp; go
-}
+# }
 
 
 # Cal on-off
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
 # infile $disk/20191114/20191114-231326-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF01; inp; go
 # infile $disk/20191114/20191114-231342-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF02; inp; go
 # infile $disk/20191115/20191115-231432-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF03; inp; go
@@ -53,12 +53,12 @@ board $f
 # infile $disk/20191207/20191207-223627-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF17; inp; go
 # infile $disk/20191208/20191208-214236-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF18; inp; go
 # infile $disk/20191208/20191208-214251-28-19-CAL_ONOFF; source CAL_FEED$f_ONOFF19; inp; go
-}
+# }
 
 # 3C84 scans
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
 # infile $disk/20191114/20191114-203737-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS01; inp; go
 # infile $disk/20191114/20191114-204105-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS02; inp; go
 # infile $disk/20191115/20191115-215334-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS03; inp; go
@@ -76,12 +76,12 @@ board $f
 # infile $disk/20191208/20191208-180216-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS15; inp; go
 # infile $disk/20191208/20191208-180542-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS16; inp; go
 # infile $disk/20191208/20191208-180908-28-19-3C84_OPTIMIZED; source 3C84_FEED$f_CROSS17; inp; go
-}
+# }
 
 # 3C147 scans
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
 # infile $disk/20191114/20191114-232541-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS01; inp; go
 # infile $disk/20191114/20191114-232911-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS02; inp; go
 # infile $disk/20191114/20191114-233241-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS03; inp; go
@@ -118,12 +118,12 @@ board $f
 # infile $disk/20191208/20191208-220252-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS31; inp; go
 # # Partial measurement - ignore
 # #infile $disk/20191208/20191208-220954-28-19-3C147_OPTIMIZED; source 3C147_FEED$f_CROSS32; inp; go
-}
+# }
 
 # 3C138 scans
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
 # infile $disk/20191114/20191114-233757-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS01; inp; go
 # infile $disk/20191114/20191114-234125-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS02; inp; go
 # infile $disk/20191114/20191114-234453-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS03; inp; go
@@ -156,22 +156,22 @@ board $f
 # infile $disk/20191208/20191208-221536-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS28; inp; go
 # infile $disk/20191208/20191208-221904-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS29; inp; go
 # infile $disk/20191208/20191208-222235-28-19-3C138_OPTIMIZED; source 3C138_FEED$f_CROSS30; inp; go
-}
+# }
 
 # 3C286 scans
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
 # infile $disk/20191118/20191118-033454-28-19-3C286_OPTIMIZED; source 3C286_FEED$f_CROSS01; inp; go
 # infile $disk/20191118/20191118-033820-28-19-3C286_OPTIMIZED; source 3C286_FEED$f_CROSS02; inp; go
 # infile $disk/20191118/20191118-034146-28-19-3C286_OPTIMIZED; source 3C286_FEED$f_CROSS03; inp; go
 # infile $disk/20191118/20191118-034512-28-19-3C286_OPTIMIZED; source 3C286_FEED$f_CROSS04; inp; go
-}
+# }
 
 # 3C84 maps
-foreach f (0 1 2 3 4 5 6) {
-feed $f
-board $f
+# foreach f (0 1 2 3 4 5 6) {
+# feed $f
+# board $f
 # infile $disk/20191114/20191114-204518-28-19-3C84_AZ; source 3C84_FEED$f_AZ1; inp; go
 # infile $disk/20191114/20191114-235249-28-19-3C84_EL; source 3C84_FEED$f_EL1; inp; go
 # infile $disk/20191115/20191115-000020-28-19-3C84_EL; source 3C84_FEED$f_EL2; inp; go
@@ -182,7 +182,7 @@ board $f
 # infile $disk/20191206/20191206-195210-28-19-3C84_EL; source 3C84_FEED$f_EL5; inp; go
 # infile $disk/20191207/20191207-180434-28-19-3C84_EL; source 3C84_FEED$f_EL6; inp; go
 # infile $disk/20191208/20191208-181326-28-19-3C84_EL; source 3C84_FEED$f_EL7; inp; go
-}
+# }
 
 # Perseus maps
 foreach f (4 5 6) {
