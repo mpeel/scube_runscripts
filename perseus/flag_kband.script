@@ -3,6 +3,8 @@
 
 !rm -f /scratch/mpeel/PERSEUS_K.SCUBE/*FLAG*
 
+outfile /scratch/mpeel/PERSEUS_K.SCUBE
+
 scube::flag_rfi
 method user
 
