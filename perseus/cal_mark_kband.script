@@ -9,25 +9,25 @@ calsteps solve_counts_to_kelvin
 steps doflag select_chans
 
 foreach f ( 0 1 2 3 4 5 6) {
-infile /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF01
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF02
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF03
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF04
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF05
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF06
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF07
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF08
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF09
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF10
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF11
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF12
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF13
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF14
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF15
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF16
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF17
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF18
-infile += /scratch/mpeel/PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF19
+infile PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF01
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF02
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF03
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF04
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF05
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF06
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF07
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF08
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF09
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF10
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF11
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF12
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF13
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF14
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF15
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF16
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF17
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF18
+infile += PERSEUS_K.SCUBE/CAL_FEED$f_ONOFF19
 
 feed $f
 stokes LL
