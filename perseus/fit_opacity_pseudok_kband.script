@@ -1,0 +1,66 @@
+!/bin/rm CRAB.SCUBE/OPACITY.tab
+
+modsel scube::Tsys_profile_dual
+modmin tau 0.01
+modmax tau 0.5
+modset tau 0.05
+
+modmin T0_pol1 10
+modmax T0_pol1 500
+modset T0_pol1 50
+modfree T0_pol1
+
+modmin T0_pol2 0
+modmax T0_pol2 1e30
+modset T0_pol2 0
+modfree T0_pol2
+
+modset Tcmb 2.73
+modset Tgal 0.0
+modset eta_F 0.9
+
+modset Tatm 266
+modfix Tatm
+modinp
+
+setfit scheme rnd_search+gradient
+setfit niter 500,500
+setfit precision 1e-3,1e-6
+setfit cloud_points 200
+inp setfit
+
+scube::calib
+calsteps correct_bpass correct_counts_to_jansky
+interpol average
+iinp
+
+scube::fit_skydip
+data_units KELVIN
+el_min 30
+el_max 90
+set_Tatm no
+gain 1.2
+calc_errors yes
+inp
+
+scube::opacity
+infile PERSEUS_K.SCUBE
+in2files SKYDIP_FEED0_SCAN01
+in2files += SKYDIP_FEED0_SCAN02
+in2files += SKYDIP_FEED0_SCAN03
+in2files += SKYDIP_FEED0_SCAN04
+in2files += SKYDIP_FEED0_SCAN05
+in2files += SKYDIP_FEED0_SCAN06
+in2files += SKYDIP_FEED0_SCAN07
+in2files += SKYDIP_FEED0_SCAN08
+in2files += SKYDIP_FEED0_SCAN09
+in2files += SKYDIP_FEED0_SCAN10
+in2files += SKYDIP_FEED0_SCAN11
+in2files += SKYDIP_FEED0_SCAN12
+stokes LL RR
+bchan 70
+echan 922
+nchav all
+data_units COUNTS
+steps doflag docalib select_chans
+inp; go

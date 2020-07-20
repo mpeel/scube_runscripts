@@ -1,0 +1,294 @@
+# macro read plot_leakage.sm go 3C129_04JUN15.SCUBE 0 0 1024
+
+go_res 4
+
+   define f $2
+   define ch1 $3
+   define ch2 $4
+
+   erase
+   lw 2.1
+   window 1 1 1 1
+   location 5000 28000 5000 28000
+   expand 0.9
+   define y_gutter 0.
+   ticksize 0 0 0 0
+   ptype 1 1
+
+
+   add_ctype grigio 100 100 100
+
+   window 2 4 1:2 4
+
+   data $1"/POL_LEAKAGE_FEED"$f".tab"
+   lines 0 0
+   read {cc 1 nnu 2 II 3 QQ 4 UU 5 VV 6 SSMI 7 SSMQ 8 SSMU 9 SSMV 10 flg 11}
+   set ch=cc if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set nu=nnu/1e6 if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set I=II if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set U=UU if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set Q=QQ if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set V=VV if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set SCH=cc if (cc>= $ch1 && cc <= $ch2)
+   set SMU=SSMU if (cc>= $ch1 && cc <= $ch2)
+   set SMQ=SSMQ if (cc>= $ch1 && cc <= $ch2)
+
+   define nucell $(nu[1]-nu[0])
+   echo nucell= $nucell
+
+   stats (100*(Q)) m s k
+   vform s 1
+   expand 1.1
+   poslab 0.15 0.15 putlabel 5 rms = $s %
+   echo Q/I mean=$m rms=$s
+   expand 0.9
+
+   vecminmax Q min max
+   define y1 $($min-0.2*($max-$min))
+   define y2 $($max+0.2*($max-$min))
+   limits $ch1 $ch2 $y1 $y2
+   ticksize 0 0 0 0
+
+   box 0 2 3 0     
+   lw 2.1
+   ltype 0
+   ctype grigio
+   connect SCH SMQ
+   ctype default
+   ctype red
+   points ch Q
+   ctype default
+   expand 1.25
+   ylabel Q/I
+   expand 0.9
+   
+   define nu1 $(nu[0]+$nucell*($fx1-ch[0]))
+   define nu2 $(nu[0]+$nucell*($fx2-ch[0]))
+
+   limits $nu1 $nu2 $fy1 $fy2
+
+   box 3 3 1 3
+   poslab 0.5 1.125 putlabel 5 [MHz]
+
+
+   #RESIDUALS
+   window 2 4 1:2 3
+   set res=QQ-SSMQ if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   #vecminmax res min max
+   #define y1 $($min-0.1*($max-$min))
+   #define y2 $($max+0.1*($max-$min))
+   limits $ch1 $ch2 $fy1 $fy2
+   box 0 2 0 0     
+   lw 2.1 ltype 1
+   relocate $fx1 0 draw $fx2 0
+   ltype 0 ctype red
+   points ch res
+   ctype default
+   expand 1.25
+   ylabel residuals
+   expand 0.9
+   stats (100*(res)) m s k
+   vform s 1
+   expand 1.1
+   poslab 0.15 0.15 putlabel 5 rms = $s %
+   echo RESIDUAL Q/I mean=$m rms=$s
+   expand 0.9
+   
+   window 2 4 1:2 2
+
+   stats (100*U) m s k
+   vform s 1
+   expand 1.1
+   poslab 0.15 0.15 putlabel 5 rms = $s %
+   echo U/I mean=$m rms=$s
+   expand 0.9
+
+   vecminmax U min max
+   define y1 $($min-0.2*($max-$min))
+   define y2 $($max+0.2*($max-$min))
+   limits $ch1 $ch2 $y1 $y2
+   ticksize 0 0 0 0
+
+   ltype 0
+   ctype grigio
+   connect SCH SMU
+   ctype default
+   
+   ctype blue
+   points ch U
+   ctype default
+
+   box 0 2 0 0     
+   lw 2.1
+   expand 1.25
+   ylabel U/I
+   expand 0.9
+
+   #RESIDUALS
+   window 2 4 1:2 1
+   set res=UU-SSMU if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   #vecminmax res min max
+   #define y1 $($min-0.1*($max-$min))
+   #define y2 $($max+0.1*($max-$min))
+   limits $ch1 $ch2 $fy1 $fy2
+   box 1 2 0 0     
+   lw 2.1 ltype 1
+   relocate $fx1 0 draw $fx2 0
+   ltype 0 ctype blue
+   points ch res
+   ctype default
+   expand 1.25
+   ylabel residuals
+   expand 0.9
+   
+   xlabel CHANNEL
+   stats (100*(res)) m s k
+   vform s 1
+   expand 1.1
+   poslab 0.15 0.15 putlabel 5 rms = $s %
+   echo RESIDUAL U/I mean=$m rms=$s
+   expand 0.9
+
+
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5
+    relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+        
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)
+
+go 4
+
+   define f $2
+   define ch1 $3
+   define ch2 $4
+
+   window 1 1 1 1
+   location 5000 28000 5000 28000
+   notation -5 5 -5 5
+   erase
+   lw 2.1
+   window 1 2 1 1
+   expand 0.9
+   define y_gutter 0.
+   ticksize 0 0 0 0
+   ptype 1 1
+
+
+   add_ctype grigio 100 100 100
+
+   window 1 2 1 2
+
+   data $1"/POL_LEAKAGE_FEED"$f".tab"
+   lines 0 0
+   read {cc 1 nnu 2 II 3 QQ 4 UU 5 VV 6 SSMI 7 SSMQ 8 SSMU 9 SSMV 10 flg 11}
+   set ch=cc if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set nu=nnu/1e6 if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set I=II if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set U=UU if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set Q=QQ if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set V=VV if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set SCH=cc if (cc>= $ch1 && cc <= $ch2)
+   set SMU=SSMU if (cc>= $ch1 && cc <= $ch2)
+   set SMQ=SSMQ if (cc>= $ch1 && cc <= $ch2)
+
+   define nucell $(nu[1]-nu[0])
+   echo nucell= $nucell
+
+   stats (100*(Q)) m s k
+   vform s 1
+   expand 1.1
+   poslab 0.15 0.1 label FEED=$f rms = $s %
+   echo Q/I mean=$m rms=$s
+   expand 0.9
+
+   vecminmax Q min max
+   define y1 $($min-0.1*($max-$min))
+   define y2 $($max+0.1*($max-$min))
+   limits $ch1 $ch2 $y1 $y2
+   #limits $ch1 $ch2  -0.1 0.1
+   ticksize 0 0 0 0
+
+   box 0 2 3 0     
+   lw 2.1
+   ltype 0
+ 
+   ltype 2
+   relocate $fx1 0 draw $fx2 0
+   ltype 0   
+
+   ctype red
+   lw 2.1
+   points ch Q
+   lw 2.1
+   ctype default
+
+   ctype grigio
+   connect SCH SMQ
+   ctype default
+
+
+   expand 1.25
+   ylabel Q/I
+   expand 0.9
+   #limits nu $fy1 $fy2
+
+   define nu1 $(nu[0]+$nucell*($fx1-ch[0]))
+   define nu2 $(nu[0]+$nucell*($fx2-ch[0]))
+
+   limits $nu1 $nu2 $y1 $y2
+   #limits $nu1 $nu2 -0.1 0.1
+
+
+   box 3 3 1 3
+   poslab 0.5 1.125 putlabel 5 [MHz]
+
+
+   window 1 2 1 1
+
+   stats (100*U) m s k
+   vform s 1
+   expand 1.1
+   poslab 0.15 0.1 label FEED=$f rms = $s %
+   echo U/I mean=$m rms=$s
+   expand 0.9
+
+   vecminmax U min max
+   define y1 $($min-0.2*($max-$min))
+   define y2 $($max+0.2*($max-$min))
+   limits $ch1 $ch2 $y1 $y2
+   #limits  $ch1 $ch2 -0.1 0.1
+   ticksize 0 0 0 0
+
+   ltype 2
+   relocate $fx1 0 draw $fx2 0
+   ltype 0   
+
+   ctype blue
+   lw 2.1
+   points ch U
+   lw 2.1
+   ctype default
+
+   ltype 0
+   ctype grigio
+   connect SCH SMU
+   ctype default
+   
+
+   box 1 2 0 0     
+   lw 2.1
+   expand 1.25
+   ylabel U/I
+   expand 0.9
+
+   
+   xlabel CHANNEL
+   

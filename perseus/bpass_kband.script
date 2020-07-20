@@ -1,0 +1,64 @@
+scube::bpass
+
+foreach f ( 1 2 3 4 5 6) {
+
+infiles ""
+
+foreach dir ( CROSS01 ) {
+
+infiles += PERSEUS_K.SCUBE/3C286_FEED$f_$dir
+}
+
+feed $f
+donorm yes
+calsources 3C286
+
+bchan 0
+echan end
+nchav 0
+
+fwhm 0.8
+nu_ref 25e9
+soltype mean
+refchans 200 400
+clip_scatter 2
+dointer yes
+dosmooth yes
+ch_win 1
+soltype mean
+steps doflag remove_baseline
+
+stokes RR; inp; go
+
+stokes LL; inp; go
+}
+
+foreach f ( 0 1 2 3 4 5 6) {
+infiles ""
+foreach dir (CROSS01 CROSS02 CROSS03 CROSS04 ) {
+infiles += PERSEUS_K.SCUBE/3C286_FEED$f_$dir
+}
+
+feed $f
+donorm yes
+calsources 3C286 3C286 3C286 3C286
+
+bchan 0
+echan end
+nchav 0
+
+fwhm 0.8
+nu_ref 25e9
+soltype mean
+refchans 200 400
+clip_scatter 2
+dointer yes
+dosmooth yes
+ch_win 1
+soltype mean
+steps doflag remove_baseline
+
+stokes RR; inp; go
+
+stokes LL; inp; go
+}

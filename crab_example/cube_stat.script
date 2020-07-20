@@ -1,0 +1,13 @@
+SIproject::stats_fitscube
+box Box +Ellipse 45 64 64 30 20 scheme box
+foreach f ( 0 1 2 3 4 5 6) {
+foreach dir ( RA1 DEC1 RA2 DEC2) {
+define s I
+if ($f = 5) {define s RR}
+infile CRAB_TOTI/CRAB_FEED$f_$s_$dir.FITS
+box Box +Ellipse 45 64 64 35 25
+outfile CRAB_TOTI/CRAB_FEED$f_$s_$dir.stat inp; go
+box Box +Annulus 0 64 64 75 75 4
+outfile CRAB_TOTI/CRAB_FEED$f_$s_$dir_noise.stat inp; go
+}
+}

@@ -1,0 +1,163 @@
+# macro read plot_polcal.sm go 3C129_02AUG15.SCUBE 0 0 1024 100 900
+
+go 6
+
+   define f $2
+   define ch1 $3
+   define ch2 $4
+
+   define sch1 $5
+   define sch2 $6
+
+
+   erase
+   lw 2.1
+   window 1 1 1 1
+   location 5000 30000 5000 30000
+   notation -5 5 -5 5
+   expand 0.9
+   define y_gutter 0.
+   ticksize 0 0 0 0
+   ptype 1 1
+
+   add_ctype grigio 100 100 100
+
+   window 2 2 1:2 2
+
+   data $1"/POL_ABSOLUTE_PA_FEED"$f".tab"
+   lines 0 0
+   read {cc 1 nnu 2 II 3 PPANG 4 FFPOL 5 SSFPOL 9 SSPANG 10 MMI 11 MMFPOL 12 MMPANG 13 DDPA 14 flg 16 CCSPANG 17}
+   set ch=cc if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set nu=nnu/1e6 if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set I=II if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set PANG=PPANG+DDPA if (flg==0 && cc>= $ch1 && cc <= $ch2)
+
+   #FORCE PANG BETWEEN -90, 90 DEG
+   set TMP=PANG
+   do i=0,$(dimen(PANG)-1) {
+   if(PANG[$i] < -90 || PANG[$i] > 90) {set TMP[$i]=PANG[$i]-(INT(PANG[$i]/180))*180}   
+   if(TMP[$i] < -90) { set TMP[$i]=TMP[$i]+180}
+   if(TMP[$i] > 90) {set TMP[$i]=TMP[$i]-180}
+   }
+   set PANG=TMP
+
+ 
+
+   set FPOL=FFPOL if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set SPANG=SSPANG if (cc>= $ch1 && cc <= $ch2)
+   set CSPANG=CCSPANG if (cc>= $ch1 && cc <= $ch2)
+   set SFPOL=SSFPOL if (cc>= $ch1 && cc <= $ch2)
+   set MPANG=MMPANG if (cc>= $ch1 && cc <= $ch2)
+   set MFPOL=MMFPOL if ( cc>= $ch1 && cc <= $ch2)
+   set MI=MMI if ( cc>= $ch1 && cc <= $ch2)
+   set MCH=cc if ( cc>= $ch1 && cc <= $ch2)
+   
+   define nucell $(nu[1]-nu[0])
+   echo nucell= $nucell
+
+   limits $ch1 $ch2 -1.99 0.1
+   ticksize 0 0 -1 0
+   box 0 2 3 0     
+   lw 3.1
+   ltype 0
+
+   ctype grigio
+   connect MCH (lg(MFPOL))
+   ctype default lw 2.1
+   ctype red lw 3.1
+   points ch (lg(FPOL))
+   ctype default lw 2.1
+
+   set v=100*FPOL if( FPOL>0)
+
+   stats_med v m s 
+   vform s 1
+   vform m 1
+   expand 1.1
+   poslab 0.1 0.1 label FEED $f  <FPOL> = $m\pm $s %
+ 
+   set v=100*MFPOL if(cc>$sch1 && cc<$sch2)
+
+   stats v m s k
+   vform s 1
+   vform m 1
+   label    model = $m %
+   expand 0.9
+
+   expand 1.1
+   ylabel FPOL
+   expand 0.9
+   expand 0.9
+
+   define nu1 $(nu[0]+$nucell*($fx1-ch[0]))
+   define nu2 $(nu[0]+$nucell*($fx2-ch[0]))
+
+   limits $nu1 $nu2 $fy1 $fy2
+   box 3 3 1 3
+   poslab 0.5 1.125 putlabel 5 [MHz]
+   
+   window 2 2 1:2 1
+   ticksize 0 0 0 0
+   limits $ch1 $ch2 -95 95
+   box 1 2 0 0
+
+   lw 3.1 ltype 0
+
+   ctype green
+   ptype 4 1
+   points MCH CSPANG
+   ctype default
+   ptype 1 1
+
+
+   ctype grigio
+   connect MCH MPANG
+   ctype default lw 3.1
+   ltype 0 ctype red
+   points ch PANG
+   ctype default
+   lw 2.1
+
+  
+   expand 1.1
+   ylabel PANG (Deg)
+   xlabel CHANNEL
+
+   data $1"/POL_ABSOLUTE_PA_FEED"$f".tab"
+   lines 0 0
+   read {smooth 18}
+   expand 0.7
+   poslab 0.1 0.9 label SOLUTION INTERVAL = $(smooth[0]/1e6) MHz
+   expand 0.9
+   
+   set v=CSPANG if(MCH>$sch1 && MCH<$sch2)
+
+   stats v m s k
+   vform s 1
+   vform m 1
+   expand 1.1
+   poslab 0.1 0.1 label FEED $f  <PANG> = $m\pm $s deg
+
+   set v=MPANG if(cc>$sch1 && cc<$sch2)
+
+   stats v m s k
+
+   vform s 1
+   vform m 1
+   label    model = $m deg
+   expand 0.9
+
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5
+    relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+        
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)
+		

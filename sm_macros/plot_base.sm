@@ -1,0 +1,222 @@
+#macro read plot_base.sm gomulti "3C286_6_RA1_LL_BASELINE" 0 0
+
+go  3
+
+    define i1 $2
+    define i2 $3
+
+    window 1 1 1 1
+    location 5000 30000 5000 30000
+
+    define rms 0.015
+
+    ticksize 0 0 0 0
+    data $1
+    lines 0 0
+    read {iidx 1.f dd 2.f ssky 3.f bbase 4.f ssub 5.f eele 6.f ttime 7.f flg 8.f id 9.s units 10.s channel 11.s  mmask 12.f}
+
+    add_ctype grigio 150 150 150
+
+    vecminmax iidx min max
+    if($i1==0 && $i2==0) {
+          define i1 $($min-0.05*($max-$min))
+          define i2 $($max+0.05*($max-$min))
+    }
+
+    set idx=iidx if(flg==0 && iidx>=$i1 && iidx<$i2)
+    set d=dd if(flg==0 && iidx>=$i1 && iidx<$i2)
+    set sky=ssky if(flg==0 && iidx>=$i1 && iidx<$i2 )
+    set base=bbase if(flg==0 && iidx>=$i1 && iidx<$i2 )
+    set sub=ssub if(flg==0 && iidx>=$i1 && iidx<$i2)
+    set mask=mmask if(flg==0 && iidx>=$i1 && iidx<$i2)
+    set ele=eele if(flg==0 && iidx>=$i1 && iidx<$i2 )
+
+
+    vecminmax ele emin emax 
+
+    ptype 4 1
+    expand 1.2
+    lw 2.1
+
+    erase
+
+    define y_gutter 0.1
+
+    window 1 2 1 1
+
+    define min -1
+    define max 1
+    if ($(dimen(sub)) >0) {vecminmax sub min max}
+
+    #limits iidx -0.2 $($max+0.2)
+    #limits iidx $($min-0.9*($max-$min)) $($max+0.9*($max-$min))
+
+    limits $i1 $i2  $($min-0.9*($max-$min)) $($max+0.9*($max-$min))
+
+    ctype red
+
+    connect idx sub
+    points idx sub
+
+    lw 1
+    ltype 1
+    ctype grigio
+    relocate -10000 0 draw 10000 0
+    ltype 0
+    lw 2.1
+    ctype default
+    ctype default
+    lw 3
+    
+    do _i=0,$(dimen(idx)-2) {
+      
+       if( $( $(mask[$_i])) ==0 && $(mask[$_i+1]) ==0) {
+                  relocate $(idx[$_i])  $(sky[$_i]) draw  $(idx[$_i+1])  $(sky[$_i+1])
+       }
+    
+    }
+
+    lw 2.1
+
+    box
+
+    posline 0.1 0.075 0.2 0.075
+    ctype default
+    label  sky model
+
+    set res=sub-sky
+    stats res m s k
+    vform s 4
+
+    define l $(int(lg(abs($m)))-1)
+    define mm $($m/10**$l)
+    vform mm 4
+    
+    expand 1.1
+    poslab 0.05 0.9 label mean: $mm\times 10^{$l}  rms: $s  $(units[0])
+    expand 1.2
+
+    lw 2.1
+    ylabel SUB $(units[0])
+    xlabel DATA INDEX
+
+    window 1 2 1 2
+
+    set lbase=lg(base)
+    set ld=lg(d)
+
+    define max 1
+    define min -1
+    if($(dimen(d)>0)) {vecminmax d min max}
+    
+    limits iidx $($min-0.9*($max-$min)) $($max+0.9*($max-$min))
+
+    limits $i1 $i2 $($min-0.9*($max-$min)) $($max+0.9*($max-$min))
+
+    ticksize 0 0 0 0
+
+    ctype red
+    connect idx d
+
+    points idx d
+    ctype default
+    lw 3
+    ctype blue
+    lw 2.1
+
+    connect idx base
+    posline 0.1 0.075 0.2 0.075
+    ctype default
+    label  baseline model
+
+    box 0 2 0 0
+    ltype 2
+    relocate 0 0 draw 2000 0
+    ltype 0
+    lw 2.1
+    ylabel $(units[0])
+
+    expand 0.9
+  
+    expand 1.1
+    vform emin 2
+    vform emax 2
+    poslab 0.05 0.9 label EL range: $emin^{\circ}, $emax^{\circ}
+    expand 0.9
+    
+    !echo $map "| sed 's/_/\\\_/g' > _SCRATCH_"
+    data _SCRATCH_
+    read { s 1.s}
+    poslab 0.0 1.05 label $(s[0])  subscan: $(id[0])  channel: $(channel[0])
+    !/bin/rm _SCRATCH_
+
+gomulti 3
+    window 1 1 1 1
+    erase
+
+    define map $1
+
+    !/bin/ls -1 -t $1 | grep .tab  | sed 's/\// /' > _SCRATCH_
+
+    data  _SCRATCH_
+    read {flist 1.s}
+
+    set flist=reverse(flist)
+
+    define nscan $(dimen(flist))
+
+    define plot next
+
+    define i 1
+
+    foreach f flist {
+
+        !echo $f "| sed 's/_/ /g' > _SCRATCH_"
+        data _SCRATCH_
+        read row s 1.s
+        !/bin/rm _SCRATCH_
+
+        window 1 $nscan 1 $i
+        echo $f    
+        go $1"/"$f  $2 $3
+
+        define plot ? {PRESS ENTER TO PLOT NEXT SCAN}
+
+    }
+
+  
+
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5
+    relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+        
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)
+
+    ##############################################################    
+posline  4   ## TeoMacro ##disegna una linea  esempio 0.1 0.2 0.3 0.2
+         poslab $1 $2
+     draw $($fx1+$3*($fx2-$fx1))  $($fy1+$4*($fy2-$fy1))
+     ##############################################################
+    ##############################################################
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5
+    relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+    ##############################################################
+    ##############################################################
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+        
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)

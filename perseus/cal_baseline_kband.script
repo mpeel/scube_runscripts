@@ -1,0 +1,120 @@
+!/bin/rm -Rf CAL_BASELINE
+!mkdir CAL_BASELINE
+
+scube::remove_scan_baseline
+
+data_units COUNTS
+niter 3
+clip 5
+poldeg 1
+ftrim 0.1
+save yes
+ch_save 70-922
+steps doflag
+
+foreach dir (CROSS01 ) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s; feed $f
+
+infile PERSEUS_K.SCUBE/3C286_FEED$f_$dir
+outfile CAL_BASELINE/3C286_FEED$f_$dir_$s
+Inp; go
+}
+}
+}
+
+foreach dir ( CROSS01) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s; feed $f
+infile PERSEUS_K.SCUBE/3C84_FEED$f_$dir
+outfile CAL_BASELINE/3C84_FEED$f_$dir_$s
+Inp; go
+}
+}
+}
+
+foreach dir ( CROSS01) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s; feed $f
+infile PERSEUS_K.SCUBE/3C147_FEED$f_$dir
+outfile CAL_BASELINE/3C147_FEED$f_$dir_$s
+Inp; go
+}
+}
+}
+
+foreach dir ( CROSS01) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s; feed $f
+infile PERSEUS_K.SCUBE/3C138_FEED$f_$dir
+outfile CAL_BASELINE/3C138_FEED$f_$dir_$s
+Inp; go
+}
+}
+}
+
+foreach dir (CROSS01 CROSS02 CROSS03 CROSS04) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s
+feed $f
+
+infile PERSEUS_K.SCUBE/3C286_FEED$f_$dir
+outfile CAL_BASELINE/3C286_FEED$f_$dir_$s
+
+inp
+go
+}
+}
+}
+
+foreach dir (CROSS01 CROSS02 CROSS03 CROSS04 CROSS05 CROSS06 CROSS07 CROSS08 CROSS09 CROSS10 CROSS11 CROSS12 CROSS13 CROSS14 CROSS15 CROSS16 CROSS17) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s;
+feed $f
+infile PERSEUS_K.SCUBE/3C84_FEED$f_$dir
+outfile CAL_BASELINE/3C84_FEED$f_$dir_$s
+
+Inp; go
+}
+}
+}
+
+foreach dir (CROSS01 CROSS02 CROSS03 CROSS04 CROSS05 CROSS06 CROSS07 CROSS08 CROSS09 CROSS11 CROSS12 CROSS13 CROSS14 CROSS15 CROSS16 CROSS17 CROSS18 CROSS19 CROSS20 CROSS21 CROSS22 CROSS23 CROSS24 CROSS26 CROSS27 CROSS29 CROSS30 CROSS31) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s;
+feed $f
+infile PERSEUS_K.SCUBE/3C147_FEED$f_$dir
+outfile CAL_BASELINE/3C147_FEED$f_$dir_$s
+
+Inp; go
+}
+}
+}
+
+foreach dir (CROSS01 CROSS02 CROSS03 CROSS04 CROSS05 CROSS06 CROSS07 CROSS08 CROSS09 CROSS11 CROSS12 CROSS13 CROSS14 CROSS15 CROSS16 CROSS17 CROSS18 CROSS19 CROSS21 CROSS22 CROSS23 CROSS24 CROSS25 CROSS26 CROSS27 CROSS28 CROSS29 CROSS30) {
+foreach f (1 2 3 4 5 6 ) {
+foreach s ( LL RR Q U) {
+
+stokes $s;
+feed $f
+infile PERSEUS_K.SCUBE/3C138_FEED$f_$dir
+outfile CAL_BASELINE/3C138_FEED$f_$dir_$s
+
+Inp; go
+}
+}
+}

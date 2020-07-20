@@ -1,0 +1,28 @@
+!/bin/rm -Rf CRAB_BASELINE
+!mkdir CRAB_BASELINE
+
+scube::calib
+calsteps correct_elevation_gain correct_bpass correct_opacity correct_counts_to_jansky
+gain_model Murgia_et_al_Kband_Mfeed_JUL15
+donorm_gain yes
+interpol elevation_2pt average time_2pt average
+Inp
+
+scube::remove_scan_baseline
+save yes
+ch_save 70-922
+data_units COUNTS
+niter 3
+clip 5
+poldeg 1; ftrim 0.1
+steps doflag docalib
+foreach dir (RA1 DEC1 RA2 DEC2) {
+foreach f (0 1 2 3 4 5 6) {
+foreach s ( RR LL) {
+stokes $s; feed $f
+infile CRAB.SCUBE/CRAB_FEED$f_$dir
+outfile CRAB_BASELINE/CRAB_FEED$f_$dir_$s
+inp; go
+}
+}
+}

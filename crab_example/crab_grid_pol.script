@@ -1,0 +1,44 @@
+!/bin/rm -Rf CRAB_POLI
+!mkdir CRAB_POLI
+
+scube::calib
+calsteps correct_elevation_gain correct_bpass correct_opacity correct_counts_to_jansky
+gain_model Murgia_et_al_Kband_Mfeed_JUL15
+donorm_gain yes
+interpol elevation_2pt average time_2pt average
+steps ""
+inp
+
+scube::pcal
+bchan 0
+echan end
+nchav 0
+feed 0
+calsteps correct_RLphase_shift correct_leakage correct_ppa correct_absolute_pa
+steps doflag docalib
+
+scube::grid_OTF_map
+data_units COUNTS
+nx 128
+ny 128
+xcell 15
+ycell 15
+bchan 70
+echan 922
+nchav 0
+projection TAN
+steps dopol remove_baseline select_chans
+frame EQ
+
+foreach dir (RA1 DEC1 RA2 DEC2) {
+foreach f (0 1 2 3 4 5 6) {
+foreach s ( Q U) {
+
+stokes $s; feed $f
+infile CRAB.SCUBE/CRAB_FEED$f_$dir
+outfile CRAB_POLI/CRAB_FEED$f_$s_$dir
+
+inp; go
+}
+}
+}

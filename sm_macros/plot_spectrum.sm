@@ -1,0 +1,380 @@
+# macro read plot_spectrum.sm go "3C138_RA1 3C138_DEC1 3C138_RA2 3C138_DEC2" MAXHOLD 0 1024
+
+go 4
+
+   define f $1
+   set files=<$f>
+   
+   define what $2
+
+   define ch1 $3
+   define ch2 $4
+
+   add_ctype dark_red 100 0 0
+   add_ctype dark_green 0 100 0
+   add_ctype gray 50 50 50
+   add_ctype lgray 150 150 150
+
+   set col={red green blue magenta cyan yellow dark_red dark_green gray}
+
+   erase
+   lw 2.1
+   window 1 1 1 1
+   location 3000 32000 5000 26000
+
+   notation -5 5 -5 5
+
+   expand 0.9
+
+   define x_gutter 0.75
+   define y_gutter 1.5
+
+   set stokes ={ RR LL Q U I V}
+   foreach s stokes {
+
+   if('$s' == 'RR') { window 3 2 1 2 }
+   if('$s' == 'LL') { window 3 2 2 2 }
+   if('$s' == 'Q')  { window 3 2 1 1 }
+   if('$s' == 'U')  { window 3 2 2 1 }
+   if('$s' == 'I')  { window 3 2 3 2 }
+   if('$s' == 'V')  { window 3 2 3 1 }
+   
+   define i 0
+   set dimen(_tmp)=0
+   foreach f files {
+    data $f"_"$s"_SPECTRUM.dat"
+    read {cc 1 nu 2 mean 3 rms 4 maxh 5 n 6 flg 7}   
+
+     if($ch1 == 0 && $ch2 ==0) {
+          vecminmax cc min max
+       define ch1 $min
+       define ch2 $max
+     }
+
+
+ 
+    set c=cc if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+    set valm=mean if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+    set valp=maxh if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+    set vals=rms if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+
+    if('$what'=='MEAN') {set val=valm}
+    if('$what'=='MAXHOLD') {set val=valp}
+    if('$what'=='RMS') {set val=vals}
+
+    set _tmp=(_tmp concat val)
+   }
+   vecminmax _tmp min max
+   define y1 $($min-0.1*($max-$min))
+   define y2 $($max+0.1*($max-$min))
+
+ 
+
+   limits $ch1 $ch2 $y1 $y2
+   unset _tmp
+
+   define i 0
+   set dimen(_tmp)=0
+   foreach f files {
+       ctype $(col[$i])
+    define i $($i+1)
+    data $f"_"$s"_SPECTRUM.dat"
+    read {cc 1 nnu 2 mean 3 rms 4 maxh 5 n 6 flg 7}    
+    set c=cc if (flg == 0 && cc>= $ch1 && cc <= $ch2)
+    set nu=nnu/1e6 if (flg == 0 && cc>= $ch1 && cc <= $ch2)
+    set valm=mean if (flg == 0 && cc>= $ch1 && cc <= $ch2)
+    set valp=maxh if (flg == 0 && cc>= $ch1 && cc <= $ch2)
+    set vals=rms if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+
+    if('$what'=='MEAN') {set val=valm}
+    if('$what'=='MAXHOLD') {set val=valp}
+    if('$what'=='RMS') {set val=vals}
+
+    connect c val
+   }
+   unset _tmp
+
+   ctype default lw 2.1
+
+   ticksize 0 0 0 0
+   box 1 2 3 0
+
+   define nucell $(nu[1]-nu[0])
+   echo nucell= $nucell
+   define nu1 $(nu[0]+$nucell*($fx1-c[0]))
+   define nu2 $(nu[0]+$nucell*($fx2-c[0]))
+
+   limits $nu1 $nu2  $y1 $y2
+
+   box 3 3 1 3
+   lw 2.1
+   xlabel CHANNEL
+   expand 1.5
+   poslab 0.75 0.9 putlabel 6 $s
+   expand 0.9
+   poslab 0.5 1.15 putlabel 5 MHz
+
+   if('$s' == 'RR') {
+        data $(files[0])"_"$s"_SPECTRUM.dat"
+    lines 0 0
+         read {units 8.s}    
+    ctype default
+       poslab 0. 1.35 label SHOW: $(units[0]) $what   CHANS: $ch1 - $ch2  \\nu: $fx1 - $fx2 MHz
+   }
+ 
+   }
+
+   window 2 2 1 2
+   define i 0
+   set dimen(_tmp)=0
+   poslab 0 1.5
+   foreach f files {
+          ctype $(col[$i])
+          label $(slash($f))  
+          define i ($i+1)
+   }
+
+
+# macro read plot_spectrum.sm go_stokes "3C138_RA1 3C138_DEC1 3C138_RA2 3C138_DEC2" MAXHOLD RR 0 1024
+
+go_stokes 5
+
+   define f $1
+   set files=<$f>
+
+   define what $2
+
+   define s $3
+
+   define ch1 $4
+   define ch2 $5
+
+   add_ctype dark_red 100 0 0
+   add_ctype dark_green 0 100 0
+   add_ctype gray 50 50 50
+   add_ctype lgray 150 150 150
+   add_ctype mid_gray 91 91 91
+
+   set col={red green blue magenta cyan yellow dark_red dark_green gray}
+
+   erase
+   lw 2.1
+   window 1 1 1 1
+   location 5000 30000 5000 25000
+
+   #notation -5 5 -5 5
+   expand 1.1
+
+   define x_gutter 0.75
+   define y_gutter 1.5
+   
+   define i 0
+   set dimen(_tmp)=0
+   foreach f files {
+    data $f"_"$s"_SPECTRUM.dat"
+    read {cc 1 nu 2 mean 3 rms 4 maxh 5 n 6 flg 7}   
+
+     if($ch1 == 0 && $ch2 ==0) {
+          vecminmax cc min max
+       define ch1 $min
+       define ch2 $max
+     }
+ 
+    set c=cc if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+    set valm=mean if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+    set valp=maxh if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+    set vals=rms if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+
+    if('$what'=='MEAN') {set val=valm}
+    if('$what'=='MAXHOLD') {set val=valp}
+    if('$what'=='MAX/MEAN') {set val=valp/valm}
+    if('$what'=='RMS/MEAN') {set val=vals/valm}
+    if('$what'=='RMS') {set val=vals}
+
+    set val=lg(val)
+
+    set _tmp=(_tmp concat val)
+   }
+   vecminmax _tmp min max
+
+   define y1 $(-1+$min-0.1*($max-$min))
+   define y2 $(1+$max+0.1*($max-$min))
+
+   echo $min $max
+
+   ticksize 0 0 -1 0
+
+   limits $ch1 $ch2 $y1 $y2
+
+   unset _tmp
+
+   define i 0
+   set dimen(_tmp)=0
+   foreach f files {
+       ctype $(col[$i])
+    define i $($i+1)
+    data $f"_"$s"_SPECTRUM.dat"
+    read {cc 1 nnu 2 mean 3 rms 4 maxh 5 n 6 flg 7}    
+    set c=cc if (flg == 0 && cc>= $ch1 && cc <= $ch2)
+    set nu=nnu/1e6 if (flg == 0 && cc>= $ch1 && cc <= $ch2)
+    set valm=mean if (flg == 0 && cc>= $ch1 && cc <= $ch2)
+    set valp=maxh if (flg == 0 && cc>= $ch1 && cc <= $ch2)
+    set vals=rms if (flg == 0 && cc>= $ch1 && cc<= $ch2)
+
+    set nuflg=nnu/1e6  if (flg == 1 && cc>= $ch1 && cc <= $ch2)
+    set cflg=cc  if (flg == 1 && cc>= $ch1 && cc <= $ch2)
+
+    if('$what'=='MEAN') {set val=valm}
+    if('$what'=='MAXHOLD') {set val=valp}
+    if('$what'=='MAX/MEAN') {set val=valp/valm}
+    if('$what'=='RMS/MEAN') {set val=vals/valm}
+    if('$what'=='RMS') {set val=vals}
+
+    set val=lg(val)
+
+    connect c val
+
+    ctype lgray
+    do i=0, $(dimen(cflg)-1) {
+       relocate $(cflg[$i]) $fy1 draw $(cflg[$i]) $fy2
+    }
+    ctype default
+
+   }
+   unset _tmp
+
+   if($(dimen(c))>0) {
+                define flagperc $(100*$(dimen(cflg)/($(dimen(c)))))
+                vform flagperc 3
+                 echo FRACTION OF FLAGGED CHANS: $flagperc %
+   }
+
+   ctype default lw 2.1
+  
+   box 1 2 3 0
+
+   define nucell $(nu[1]-nu[0])
+   echo nucell= $nucell
+   define nu1 $(nu[0]+$nucell*($fx1-c[0]))
+   define nu2 $(nu[0]+$nucell*($fx2-c[0]))
+
+   limits $nu1 $nu2  $fy1 $fy2
+
+   data $(files[0])"_"$s"_SPECTRUM.dat"
+   lines 0 0
+   read {units 8.s}    
+
+   box 3 3 1 3
+   #lw 2.1
+   xlabel CHANNEL
+   angle 90
+   poslab -0.15 0.5 putlabel 5 $(units[0])
+   angle 0
+   expand 1.1
+   poslab 0.5 1.075 putlabel 5 MHz
+
+   ctype default
+   expand 0.9
+
+   poslab 0. 1.15 label SHOW: $(units[0]) $what   CHANS: $ch1 - $ch2  \\nu: $fx1 - $fx2 MHz
+   expand 1.25
+   poslab 0.7 0.9 label Stokes $s
+   expand 1.1
+
+   define i 0
+   set dimen(_tmp)=0
+   poslab 0 1.2
+   foreach f files {
+          ctype $(col[$i])
+          #label $(slash($f))  
+          define i ($i+1)
+   }
+
+
+
+plot_average
+
+    ctype default
+    stats (10**val) med sig k
+    ltype 2
+    relocate $fx1 $(lg($med)) draw $fx2 $(lg($med))
+    ltype 0
+    vform med 2
+    expand 0.9
+    poslab 0.05 0.05 label Bandpass average: $med $(units[0])
+    expand 1.2
+
+
+
+clip 1
+     limits $ch1 $ch2 $fy1 $fy2
+
+
+
+     !/bin/rm suggested_flag.tab
+
+     define c1 -1
+     define c2 -1
+
+     define lev $(lg($1))
+
+	do i=0,$(dimen(c)-1) {
+	   if (val[$i]> $lev) {
+	   ctype lgray
+	   relocate $(c[$i]) $fy1 draw $(c[$i]) $fy2 
+	   ctype default
+
+	   if($c1 == -1) {
+	   	  define c1 $(c[$i])
+	   	  define c2 $(c[$i])
+
+	    }  else {
+	        define c2 $(c[$i])
+
+	    }
+	   
+	   } else {
+
+	     if($c1 != -1 && $c2 != -1) {
+
+	     	   write + suggested_flag.tab flag all $s all all  $c1:$c2  ; go
+		   define c1 -1
+		   define c2 -1
+	     }
+
+	   }
+
+	}
+	
+	box
+ 	expand 1.25
+   	poslab 0.7 0.9 label Stokes $s
+   	expand 1.1
+
+
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5
+    relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+        
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)
+
+##############################################################    
+posline  4   ## TeoMacro ##disegna una linea  esempio 0.1 0.2 0.3 0.2
+         poslab $1 $2
+     draw $($fx1+$3*($fx2-$fx1))  $($fy1+$4*($fy2-$fy1))
+
+
+slash 1
+    !echo $1 "| sed 's/_/\\\_/g' > _SCRATCH_"
+    data _SCRATCH_
+    read row s 1.s
+    !/bin/rm _SCRATCH_
+    set $0=s[0]

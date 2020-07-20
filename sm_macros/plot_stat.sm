@@ -1,0 +1,138 @@
+go
+	define tau 0.035
+
+	define Trx 35
+	define Tatm 266
+	define tsys $(($Trx+$Tatm*$tau))
+
+	define sec $(15/180)
+	define air $(1/sin(60*PI/180))
+	define chw $(1500/1024)
+	define gain 0.6
+
+	define th $(exp($tau*$air)*2*$tsys/($gain*sqrt(2*$chw*$sec*1e6)))
+
+	define beamarea $(1.133*(47/15)**2) #pix
+
+	erase
+	lw 2.1
+	expand 0.9
+	window 1 1 1 1
+	location 3000 32000 3000 32000
+	notation -2 2 -2 2
+
+	define y_gutter 0.2
+	define x_gutter 0.2
+
+
+	foreach feed ( 0 1 2 3 4 5 6) {
+
+
+	set dimen(vflux)=0
+
+	foreach d ( RA1 DEC1 RA2 DEC2) {
+
+	
+	define s I
+	if ($feed == 5) {define s RR}
+
+	if ($feed==0) { window 2 4 1 4 box 0 2 0 0}
+	if ($feed==1) { window 2 4 1 3 box 0 2 0 0}
+	if ($feed==2) { window 2 4 1 2 box 0 2 0 0}
+	if ($feed==3) { window 2 4 1 1 box 1 2 0 0}
+	if ($feed==4) { window 2 4 2 4 box 0 0 0 0}
+	if ($feed==5) { window 2 4 2 3 box 0 0 0 0}
+	if ($feed==6) { window 2 4 2 2 box 0 0 0 0}
+
+
+	if ($feed==3) {xlabel Frequency (GHz)}
+	if ($feed==3) {ylabel Stokes I (Jy/beam)}
+
+	ticksize 0.1 0.5 -1 0
+	limits 23.9 25.4 -0.75 1.5
+
+	data "CRAB_TOTI/CRAB_FEED"$feed"_"$s"_"$d".stat"
+	read {c 2 toti 5 npix 4}
+	
+	set I=(toti) if (toti>0)
+	set nu=23.9+(70+c)*1.5/1024 if(toti>0)
+
+	if ($feed==5) {set I=2*I}
+
+	set lnu=lg(nu)
+	set lI=lg(I)
+
+	sort {nu I lnu lI}
+
+	connect nu lI
+
+	data "CRAB_TOTI/CRAB_FEED"$feed"_"$s"_"$d"_noise.stat"
+	read {c 2 rms 6}
+	if ($feed==5) {set rms=2*rms}
+
+	set noise=rms if(rms>0)
+	set lnoise=lg(noise)
+
+	ctype red
+	connect nu lnoise
+	ctype default
+	
+	ltype 2
+	relocate $fx1 $(lg($th)) draw $fx2 $(lg($th))
+	ltype 0
+	
+	stats I m s k
+	define flux $($m*npix[0]/$beamarea)
+	set vflux = vflux concat ($flux)
+
+
+	}
+
+	stats vflux m s k
+	
+	vform m 1
+	poslab 0.1 0.9 label FEED$feed flux density=$m Jy
+
+	}
+
+	
+	window 2 4 2 1
+	ltype 2
+	posline 0.1 0.9 0.3 0.9
+	ltype 0
+	label  Thermal noise
+	poslab 0.1 0.7 label \tau=$tau
+	poslab 0.1 0.6 label Tsys=$tsys K
+	poslab 0.1 0.5 label Gain=$gain K/Jy
+	vform sec 3
+	poslab 0.1 0.4 label Integration=$sec sec
+	poslab 0.1 0.3 label Trx=$Trx K
+	poslab 0.1 0.2 label Tatm=$Tatm K
+	vform chw 2
+	poslab 0.1 0.1 label Ch width=$chw MHz
+	vform air 1
+	poslab 0.1 0.0 label Airmass=$air
+
+
+
+
+    ##############################################################    
+posline  4   ## TeoMacro ##disegna una linea  esempio 0.1 0.2 0.3 0.2
+         poslab $1 $2
+     draw $($fx1+$3*($fx2-$fx1))  $($fy1+$4*($fy2-$fy1))
+     ##############################################################
+    ##############################################################
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5
+    relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+    ##############################################################
+    ##############################################################
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+        
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)

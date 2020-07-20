@@ -1,0 +1,89 @@
+#CREATE SURROGATE FEED5 STOKES I BY REPLICATING STOKES RR
+foreach dir (RA1 DEC1 RA2 DEC2) {
+Fmath CRAB_TOTI/CRAB_FEED5_RR_$dir.FITS F1*2
+!mv FMATH.FITS CRAB_TOTI/CRAB_FEED5_I_$dir.FITS
+}
+
+SIproject::direct_stack_image
+subim 28 28 48 48
+outfile DIRECT_STACK_I
+infiles ""
+foreach f (0 1 2 4 5) {
+infiles += CRAB_TOTI/CRAB_FEED$f_I_RA1.FITS
+infiles += CRAB_TOTI/CRAB_FEED$f_I_RA2.FITS
+infiles += CRAB_TOTI/CRAB_FEED$f_I_DEC1.FITS
+infiles += CRAB_TOTI/CRAB_FEED$f_I_DEC2.FITS
+}
+inp; go
+outfile DIRECT_STACK_I_DEC
+infiles ""
+foreach f (0 1 2 4 5 ) {
+infiles += CRAB_TOTI/CRAB_FEED$f_I_DEC1.FITS
+infiles += CRAB_TOTI/CRAB_FEED$f_I_DEC2.FITS
+}
+inp; go
+
+outfile DIRECT_STACK_I_RA
+infiles ""
+foreachf(01245 ){
+infiles += CRAB_TOTI/CRAB_FEED$f_I_RA1.FITS
+infiles += CRAB_TOTI/CRAB_FEED$f_I_RA2.FITS
+}
+inp; go
+
+#WAVELET STACKING
+SIproject::SWT_2d
+wavelet Haar
+levels 3
+inp
+
+SIproject::average_fits
+sampling_correction no
+keep_files no
+min_map 1
+smoothing_scale 0
+doweight_by_wfiles no
+doweight_by_global_rms yes
+doweight_by_local_stat no
+doweight_by_fourier_stat no
+doclip_by_local_stat no
+doweight_by_fourier_cross yes
+patch 16
+taper gaussian
+
+infile DIRECT_STACK_I_DEC.FITS DIRECT_STACK_I_RA.FITS image_direction HOR VER
+
+keep no
+scheme SWT
+outf SWT_STACK_I
+inp; go
+
+#DENOISE
+SIproject::SWT_image
+infile SWT_STACK_I.FITS
+outfile SWT_STACK_I_DENOISE
+thresholding hard
+scheme load_data analyze denoise synthetize
+sigma 0
+wavelet Haar
+levels 1
+clip 5
+min_scale 0
+max_scale 512
+subim 34 79 44 110
+keep_files no
+inp
+go
+
+#SPLAT
+SIproject::splat_image
+outfile SPLAT
+
+infile DIRECT_STACK_I.FITS
+inp; go
+
+infile SWT_STACK_I.FITS
+inp; go
+
+infile SWT_STACK_I_DENOISE.FITS
+inp; go

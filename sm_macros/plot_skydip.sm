@@ -1,0 +1,132 @@
+# macro read plot_skydip.sm go SKYDIPFIT_3C286_SKYDIP_1.tab  0 0
+go 3
+	define el1 $2
+	define el2 $3
+
+	if ($el1 == 0 && $el2==0) {
+	   define el1 0
+	   define el2 90
+	}
+
+	erase
+	window 1 1 1 1
+	location 5000 29000 5000 29000
+	lw 2.1
+	expand 1.2
+
+	data $1
+	read {tground 6.f Tatm 7.f Tatm_error 8.f tau 9.f tau_err 10.f T0 11.f T0_err 12.f eta_F 13.f eta_F_error 14.f chi 15.f pol 16.s file 17.s date 18.s ut 19.s freq 20.f bw 21.f rms 23.f units 24.s}
+
+	data $1
+	lines 0 0
+	read {eel 1 ttsys 2 mmodx 3 mmody 4 rres 5}
+
+	set el=eel if(eel>$el1 && eel <= $el2)
+	set tsys=ttsys if(eel>$el1 && eel <= $el2)
+	set modx=mmodx if(mmodx>$el1 && mmodx <= $el2)
+	set mody=mmody if(mmodx>$el1 && mmodx <= $el2)
+	set res=rres if(eel>$el1 && eel <= $el2)
+
+	define y_gutter 0
+	window 1 4 1 2:4
+
+	vecminmax tsys min max
+	define y1 $($min-0.2*($max-$min))
+	define y2 $($max+0.2*($max-$min))
+
+	#define y1 55
+	#define y2 90
+	       
+
+	limits $el1 $el2 $y1 $y2
+
+	ptype 4 1
+	points el tsys
+	ctype blue
+	lw 3
+	connect modx mody
+	lw 2.1
+	ctype default
+	box 0 2 0 0
+	ylabel T_{sys} ($(units[0]))
+
+	window 1 4 1 1:1
+
+	set tmp=abs(res)
+	vecminmax tmp min max
+	define y1 $(-2*$max)
+	define y2 $(2*$max)
+	
+	limits $el1 $el2 $y1 $y2
+
+	box 1 2 0 0
+
+	points el res
+	add_ctype grigio 100 100 100
+	ltype 2
+	ctype grigio relocate $fx1 0 draw $fx2 0
+	ctype default ltype 0
+	box 1 2 0 0
+
+	xlabel Elevation (deg)
+	ylabel res. ($(units[0]))
+	define v $(rms[0])
+	vform v 2
+	define vv $(chi[0])
+	vform vv 4
+	poslab 0.025 0.8 label rms=$v $(units[0])  \chi^2_{red}=$vv
+
+	window 1 4 1 2:4
+	define v $(tau[0])
+	define ve $(tau_err[0])
+	vform v 2
+	vform ve 6
+	poslab 0.05 0.4 label \tau_{\\nu}=$v
+
+	define v $(T0[0])
+	vform v 1
+	poslab 0.05 0.3 label T_0=$v $(units[0])
+
+	define v $(Tatm[0])
+	vform v 1
+	poslab 0.05 0.2 label T_{atm}=$v $(units[0]) (fixed)
+
+	define v $(eta_F[0])
+	vform v 2
+	poslab 0.05 0.1 label \eta_{F}=$v (fixed)
+
+	define v $(1e-6*(freq[0]+0.5*bw[0]))
+	vform v 0
+	define vv $(1e-6*bw[0])
+	vform vv 1
+
+	
+
+
+
+	define f $(file[0])
+	poslab 0 1.1 label $(slash($f))  \\nu=$v MHz  bw=$vv MHz
+	poslab 0 1.03 label STOKES $(pol[0])  $(date[0])  UT $(ut[0])  T_{ground}=$(tground[0]) C
+
+
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5 
+	relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+
+
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+		
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)
+
+slash 1
+    !echo $1 "| sed 's/_/\\\_/g' > _SCRATCH_"
+    data _SCRATCH_
+    read row s 1.s
+    !/bin/rm _SCRATCH_
+    set $0=s[0]

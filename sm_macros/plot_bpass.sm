@@ -1,0 +1,161 @@
+# macro read plot_bpass.sm go 3C129_04JUN15.SCUBE 0 0 0
+# macro read plot_bpass.sm go FILE.SCUBE FEED CH1 CH2
+
+
+go 4
+   
+   define feed $2
+   define ch1 $3
+   define ch2 $4
+
+   set pol={LL RR}
+
+   if(is_file($1"/POLAR.tab")) {
+               data $1"/POLAR.tab"
+               read {native 1.s}
+           if(native[0]== 'linear') {set pol={XX YY}}
+   }
+
+   erase
+   lw 2.1
+   window 1 1 1 1
+   location 5000 30000 5000 30000
+   expand 0.9
+   define y_gutter 0.
+   ticksize 0 0 0 0
+
+   notation -6 6 -6 6
+
+   add_ctype grigio 100 100 100
+
+   window 2 2 1:2 2
+
+   data $1"/BPASS_FEED"$feed"_"$(pol[0])".tab"
+   lines 0 0
+   read {cc 1 nnu 2 bpn 3 rrms 4 flg 6 ssbp 7}
+
+   vecminmax cc min max
+   if($ch1==0 && $ch2==0) {
+             define ch1 $($min-0.1*($max-$min))
+          define ch2 $($max+0.1*($max-$min))
+   }
+
+   set ch=cc if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set nu=nnu/1e6 if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set bp=bpn if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set sbp=ssbp if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set rms=rrms if (flg==0 && cc>= $ch1 && cc <= $ch2)
+
+   define nucell $(nu[1]-nu[0])
+   echo nucell= $nucell
+
+   set v=100*rms/bp
+   stats v m s k
+   vform s 1
+   expand 1.2
+   poslab 0.8 0.9 putlabel 5 FEED $feed   rms = $s %   
+   expand 0.9
+
+   set bp=lg(bp)
+   set sbp=lg(sbp)
+
+   vecminmax bp min max
+   define y1 $($min-0.1*($max-$min))
+   define y2 $($max+0.1*($max-$min))
+   limits $ch1 $ch2 $y1 $y2
+   #limits  $ch1 $ch2  -1.45 0.99
+
+   ticksize 0 0 -1 0
+
+   box 0 2 3 0     
+   lw 2.1
+
+   ctype grigio
+   #set u1=lg(10**bp-rms)
+   #set u2=lg(10**bp+rms)
+   #angle 90
+   #shed ch u1 ch u2 10000000
+   #angle 0
+   connect ch bp
+
+   ctype red
+   connect ch sbp
+
+   ltype 0
+   ctype default
+   ylabel STOKES $(pol[0])
+
+   define nu1 $(nu[0]+$nucell*($fx1-ch[0]))
+   define nu2 $(nu[0]+$nucell*($fx2-ch[0]))
+
+   limits $nu1 $nu2 bp
+
+
+   box 3 3 1 3
+   poslab 0.5 1.125 putlabel 5 [MHz]
+
+
+   window 2 2 1:2 1
+   data $1"/BPASS_FEED"$feed"_"$(pol[1])".tab"
+   lines 0 0
+   read {cc 1 nnu 2 bpn 3 rms 4 flg 6 ssbp 7}
+   set ch=cc if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set nu=nnu/1e6 if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set bp=bpn if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set rms=rrms if (flg==0 && cc>= $ch1 && cc <= $ch2)
+   set sbp=ssbp if (flg==0 && cc>= $ch1 && cc <= $ch2)
+
+   set v=100*rms/bp
+   stats v m s k
+   vform s 1
+   expand 1.2
+   poslab 0.8 0.9 putlabel 5 FEED $feed   rms = $s %  
+   expand 0.9
+   
+   set bp=lg(bp)
+   set sbp=lg(sbp)
+
+   vecminmax bp min max
+   define y1 $($min-0.1*($max-$min))
+   define y2 $($max+0.1*($max-$min))
+   limits $ch1 $ch2 $y1 $y2
+   #limits  $ch1 $ch2  -1.45 0.99
+
+   ticksize 0 0 -1 0
+
+   box 1 2 0 0     
+   lw 2.1
+
+   ctype grigio
+   #set u1=lg(10**bp-rms)
+   #set u2=lg(10**bp+rms)
+   #angle 90
+   #shed ch u1 ch u2 10000000
+   #angle 0
+
+   connect ch bp   
+
+   ctype red
+   connect ch sbp
+   ltype 0
+   ctype default
+   
+   box 1 2 0 0     
+   lw 2.1
+   xlabel CHANNEL
+   ylabel STOKES $(pol[1])
+
+
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5
+    relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+        
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)

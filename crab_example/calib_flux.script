@@ -38,7 +38,7 @@ inp
 foreach f ( 0) {
 
 scube::calib
-Interpol “”
+Interpol ""
 feed $f
 infile CRAB.SCUBE
 calsteps solve_counts_to_jansky
@@ -57,7 +57,8 @@ in2files += CALIB/3C286_FEED$f_LL_CROSS7.FITS
 
 inp; go
 
-in2files "" stokes RR
+in2files ""
+stokes RR
 calsources 3C286 3C286 3C286 3C286 3C286 3C286 3C286
 in2files += CALIB/3C286_FEED$f_RR_CROSS1.FITS
 in2files += CALIB/3C286_FEED$f_RR_CROSS2.FITS
@@ -69,10 +70,10 @@ in2files += CALIB/3C286_FEED$f_RR_CROSS7.FITS
 inp; go
 }
 
-foreachf( 123456){
+foreach f (1 2 3 4 5 6) {
 
 scube::calib
-Interpol “”
+Interpol ""
 feed $f
 infile CRAB.SCUBE
 calsteps solve_counts_to_jansky

@@ -1,0 +1,116 @@
+foreach s ( Q U) {
+
+SIproject::direct_stack_image
+subim 28 28 48 48
+infiles ""
+foreach f ( 0 1 2 3 4 6 ) {
+infiles += CRAB_POLI/CRAB_FEED$f_$s_RA1.FITS
+infiles += CRAB_POLI/CRAB_FEED$f_$s_RA2.FITS
+infiles += CRAB_POLI/CRAB_FEED$f_$s_DEC1.FITS
+infiles += CRAB_POLI/CRAB_FEED$f_$s_DEC2.FITS
+}
+outfile DIRECT_STACK_$s
+inp; go
+
+infiles ""
+foreach f ( 0 1 2 3 4 6 ) {
+infiles += CRAB_POLI/CRAB_FEED$f_$s_DEC1.FITS
+infiles += CRAB_POLI/CRAB_FEED$f_$s_DEC2.FITS
+}
+outfile DIRECT_STACK_$s_DEC
+inp; go
+
+infiles ""
+foreach f ( 0 1 2 3 4 6 ) {
+infiles += CRAB_POLI/CRAB_FEED$f_$s_RA1.FITS
+infiles += CRAB_POLI/CRAB_FEED$f_$s_RA2.FITS
+}
+outfile DIRECT_STACK_$s_RA
+inp; go
+
+SIproject::SWT_2d
+wavelet Haar
+levels 3
+inp
+
+SIproject::average_fits
+sampling_correction no
+keep_files no
+min_map 1
+smoothing_scale 0
+doweight_by_wfiles no
+doweight_by_global_rms yes
+doweight_by_local_stat no
+doweight_by_fourier_stat no
+doclip_by_local_stat no
+doweight_by_fourier_cross yes
+patch 16
+taper gaussian
+image_direction HOR VER
+keep no
+scheme SWT
+infile DIRECT_STACK_$s_DEC.FITS DIRECT_STACK_$s_RA.FITS
+outf SWT_STACK_$s
+inp; go
+
+#DENOISE
+SIproject::SWT_image
+infile SWT_STACK_$s.FITS
+outfile SWT_STACK_$s_DENOISE
+thresholding hard
+scheme load_data analyze denoise synthetize
+sigma 0
+wavelet Haar
+levels 1
+clip 3
+min_scale 0
+max_scale 2048
+subim 28 28 48 48
+keep_files no
+inp; go
+
+SIproject::splat_image
+outfile SPLAT
+
+infile DIRECT_STACK_$s.FITS
+inp; go
+
+infile SWT_STACK_$s.FITS
+inp; go
+
+infile SWT_STACK_$s_DENOISE.FITS
+inp; go
+}
+
+#PERC
+SIproject::stats_fits
+dosigma_blank no
+sigmaclip 3
+clip_niter 100
+precision 1e-06
+scheme box
+box BOX +Rectangle 0 38 38 20 20
+
+infile SPLAT_AVERAGE_SWT_STACK_I_DENOISE.FITS; inp; go; define Irms $SIproject::stats_fits.rms
+infile SPLAT_AVERAGE_SWT_STACK_U_DENOISE.FITS; inp; go; define Urms $SIproject::stats_fits.rms
+infile SPLAT_AVERAGE_SWT_STACK_Q_DENOISE.FITS; inp; go; define Qrms $SIproject::stats_fits.rms
+
+echo Irms=$Irms
+echo Qrms=$Qrms
+echo Urms=$Urms
+
+SIproject::convert_pol
+sigma_I $Irms
+sigma_U $Urms
+sigma_Q $Qrms
+correct_bias yes
+doblank no
+inp
+
+SIproject::Create_PERC_fits
+I_infile SPLAT_AVERAGE_SWT_STACK_I_DENOISE.FITS
+Q_infile SPLAT_AVERAGE_SWT_STACK_Q_DENOISE.FITS
+U_infile SPLAT_AVERAGE_SWT_STACK_U_DENOISE.FITS
+outfile_prefix SPLAT_AVERAGE_SWT_STACK_DENOISE
+save_noise yes
+inp; go

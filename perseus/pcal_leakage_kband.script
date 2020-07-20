@@ -1,0 +1,54 @@
+scube::calib
+calsteps correct_elevation_gain correct_bpass correct_opacity correct_counts_to_jansky
+gain_model Murgia_et_al_Kband_Mfeed_JUL15
+donorm_gain yes
+interpol elevation_2pt average time_2pt average
+inp
+
+Scube::pcal
+smooth_freq 5e6
+smooth_spectra 0
+calsteps correct_RLphase_shift solve_leakage
+steps doflag remove_baseline docalib
+
+infile PERSEUS_K.SCUBE
+
+in2files PERSEUS_K.SCUBE/3C84_FEED0_CROSS01
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS02
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS03
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS04
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS05
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS06
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS07
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS08
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS09
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS10
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS11
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS12
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS13
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS14
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS15
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS16
+in2files += PERSEUS_K.SCUBE/3C84_FEED0_CROSS17
+feed 0; inp; go
+
+foreach f (1 2 3 4 5 6) {
+in2files PERSEUS_K.SCUBE/3C84_FEED$f_CROSS01
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS02
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS03
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS04
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS05
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS06
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS07
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS08
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS09
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS10
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS11
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS12
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS13
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS14
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS15
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS16
+in2files += PERSEUS_K.SCUBE/3C84_FEED$f_CROSS17
+feed $f; inp; go
+}

@@ -1,0 +1,14 @@
+SIproject::blank_fits
+infile SPLAT_AVERAGE_SWT_STACK_I_DENOISE.FITS
+code F>0.015
+inp; go
+
+Fmath BLANK.FITS F1*0+1
+!mv FMATH.FITS CRAB_MASK.FITS
+!rm -f BLANK.FITS
+
+SIproject::puthead_fits
+infile CRAB_MASK.FITS
+keyword FRAME
+value 'EQ'
+Inp; go

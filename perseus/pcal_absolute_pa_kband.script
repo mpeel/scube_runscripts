@@ -1,0 +1,39 @@
+scube::calib
+calsteps correct_elevation_gain correct_bpass correct_opacity correct_counts_to_jansky
+gain_model Murgia_et_al_Kband_Mfeed_JUL15
+donorm_gain yes
+interpol elevation_2pt average time_2pt average
+inp
+
+scube::pcal
+bdata 1
+edata end
+solty median
+ref_chan 450
+bchan 0
+echan end
+fwhm 47/60.0
+nu_ref 24.5e9
+smooth_freq 50e6
+smooth_spectra 0
+steps doflag remove_baseline docalib
+calsteps correct_RLphase_shift correct_leakage correct_ppa solve_absolute_pa
+infile PERSEUS_K.SCUBE
+
+in2files PERSEUS_K.SCUBE/3C286_FEED0_CROSS01
+in2files += PERSEUS_K.SCUBE/3C286_FEED0_CROSS02
+in2files += PERSEUS_K.SCUBE/3C286_FEED0_CROSS03
+# Bad?
+#in2files += PERSEUS_K.SCUBE/3C286_FEED0_CROSS04
+calsources 3C286 3C286 3C286
+feed 0; inp; go
+
+foreach f (1 2 3 4 5 6) {
+in2files PERSEUS_K.SCUBE/3C286_FEED$f_CROSS01
+in2files += PERSEUS_K.SCUBE/3C286_FEED$f_CROSS02
+in2files += PERSEUS_K.SCUBE/3C286_FEED$f_CROSS03
+# Bad?
+#in2files += PERSEUS_K.SCUBE/3C286_FEED$f_CROSS04
+calsources 3C286 3C286 3C286
+feed $f; inp; go
+}

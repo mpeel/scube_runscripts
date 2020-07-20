@@ -1,0 +1,28 @@
+!/bin/rm -Rf PERSEUS_K_BASELINE
+!mkdir PERSEUS_K_BASELINE
+
+scube::calib
+calsteps correct_elevation_gain correct_bpass correct_opacity correct_counts_to_jansky
+gain_model Murgia_et_al_Kband_Mfeed_JUL15
+donorm_gain yes
+interpol elevation_2pt average time_2pt average
+Inp
+
+scube::remove_scan_baseline
+save yes
+ch_save 70-922
+data_units COUNTS
+niter 3
+clip 5
+poldeg 1; ftrim 0.1
+steps doflag docalib
+foreach dir (AZ01 AZ02 AZ03 AZ04 AZ05 AZ06 AZ07 AZ08 AZ09 AZ10 AZ11 AZ12 AZ13 AZ14 AZ15 AZ16 AZ17 AZ18 AZ19 AZ20 AZ21 AZ22 AZ23 AZ24 AZ25 AZ26 AZ27 AZ28 AZ29 AZ30 AZ31 AZ32 AZ33 AZ34 AZ35 AZ36 AZ37 AZ38 AZ39 AZ40 AZ41) {
+foreach f (0 1 2 3 4 5 6) {
+foreach s ( RR LL) {
+stokes $s; feed $f
+infile PERSEUS_K.SCUBE/PERSEUS_FEED$f_$dir
+outfile PERSEUS_K_BASELINE/PERSEUS_FEED$f_$dir_$s
+inp; go
+}
+}
+}

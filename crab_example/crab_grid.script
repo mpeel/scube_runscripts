@@ -1,0 +1,33 @@
+!rm -Rf CRAB_TOTI
+!mkdir CRAB_TOTI
+
+scube::calib
+calsteps correct_elevation_gain correct_bpass correct_opacity correct_counts_to_jansky
+gain_model Murgia_et_al_Kband_Mfeed_JUL15
+donorm_gain yes
+interpol elevation_2pt average time_2pt average
+inp
+
+scube::grid_OTF_map
+data_units COUNTS
+nx 128
+ny 128
+xcell 15
+ycell 15
+bchan 70
+echan 922
+nchav 0
+frame EQ
+projection TAN
+steps doflag docalib remove_baseline select_chans
+
+foreach dir (RA1 DEC1 RA2 DEC2) {
+foreach f (0 1 2 3 4 5 6) {
+define s I
+if ($f = 5) {define s RR}
+stokes $s; feed $f
+infile CRAB.SCUBE/CRAB_FEED$f_$dir
+outfile CRAB_TOTI/CRAB_FEED$f_$s_$dir
+inp; go
+}
+}

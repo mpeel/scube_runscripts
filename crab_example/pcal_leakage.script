@@ -20,11 +20,12 @@ in2files += CRAB.SCUBE/3C84_FEED0_CROSS4
 in2files += CRAB.SCUBE/3C84_FEED0_CROSS5
 in2files += CRAB.SCUBE/3C84_FEED0_CROSS6
 in2files += CRAB.SCUBE/3C84_FEED0_CROSS7
-in2files 
-in2files 
-in2files 
-feed 0;
-      += CRAB.SCUBE/3C84_FEED0_CROSS8 += CRAB.SCUBE/3C84_FEED0_CROSS9 += CRAB.SCUBE/3C84_FEED0_CROSS10 inp; go
-foreachf(123456 ){
-in2files CRAB.SCUBE/3C84_FEED$f_CROSS1 feed $f; inp; go
+in2files += CRAB.SCUBE/3C84_FEED0_CROSS8
+in2files += CRAB.SCUBE/3C84_FEED0_CROSS9
+in2files += CRAB.SCUBE/3C84_FEED0_CROSS10
+feed 0; inp; go
+
+foreach f(123456 ){
+in2files CRAB.SCUBE/3C84_FEED$f_CROSS1
+feed $f; inp; go
 }

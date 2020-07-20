@@ -1,0 +1,131 @@
+# macro read plot_shift.sm go 3C129_04JUN15.SCUBE 0 -3 3
+
+ 
+
+
+go 4
+ 
+     define f $2
+     define d1 $3
+     define d2 $4   
+
+     expand 0.9
+     lw 2.1
+     window 1 1 1 1
+     location 5000 28000 5000 28000
+     erase
+     notation -3 4 -3 4
+
+     define y_gutter 0.85
+
+     window 1 3 1 2
+
+     data $1"/POL_RL_PHASE_SHIFT_FEED"$f".tab"
+     lines 0 0
+     read {dd 1.f pol 2.f pang 3.f}
+
+     if ($d1 == 0 && $d2 == 0) {
+         define d1 $(dd[0])
+         define d2 $(dd[$(dimen(dd)-1)])
+     }
+
+     set d=dd if (dd >= $d1 && dd<=$d2)
+     set lpol=lg(pol) if (dd >= $d1 && dd<=$d2)
+    
+     vecminmax lpol min max
+
+     define yl ($max-2)
+     define yh $($max+0.5)
+
+     limits d $yl $yh
+     ticksize 0 0 -1 0
+     box
+     ptype 1 1
+     ctype blue
+     points d lpol
+
+     ctype default
+
+     define max 0
+     define dmax 0
+     do i=0, $(dimen(d)-1) {
+         if(lpol[$i] > $max){
+            define max $(lpol[$i])
+            define dmax  $(d[$i])
+    }
+     }
+
+     ltype 1
+     relocate $dmax -1000 draw $dmax 1000
+     ltype 0
+     vform dmax 2
+     poslab 0.1 0.8 label D= $dmax Deg/MHz  
+     poslab 0.1 0.65 label FEED=$f
+
+     box
+     ylabel POL
+     xlabel RL-shift (Deg/MHz)
+
+
+     window 1 3 1 1
+     data $1"/POL_RL_PHASE_SHIFT_FEED"$f".tab"
+     lines 0 0
+
+     read {cc 4 nnu 5 ppango 6 ppangcor 7 flg 8}
+     ticksize 0 0 0 0
+
+     set c=cc if (flg==0)
+     set nu=nnu/1e6 if (flg==0)
+     set pango=ppango if (flg==0)
+     set pangcor=ppangcor if (flg==0)
+     limits c -95 95
+
+     box     
+     points c pangcor
+     ylabel PANG CORRECT (Deg)
+     xlabel CHANNEL
+
+     window 1 3 1 3
+     data $1"/POL_RL_PHASE_SHIFT_FEED"$f".tab"
+     lines 0 0
+
+     read {cc 4 nnu 5 ppango 6 ppangcor 7 flg 8}
+     ticksize 0 0 0 0
+
+     set c=cc if (flg==0)
+     set nu=nnu/1e6 if (flg==0)
+     set pango=ppango if (flg==0)
+     set pangcor=ppangcor if (flg==0)
+
+     limits c -95 95
+
+     box 1 2 3 0     
+     points c pango
+     ctype default
+
+     ylabel PANG OBS. (Deg)
+     xlabel CHANNEL
+
+     limits nu $fy1 $fy2
+     box 3 3 1 3
+     poslab 0.5 1.2 putlabel 5 (MHz)
+
+
+poslab  2    ## TeoMacro ##posiziona la label  esempio poslabel 0.5 0.5
+    relocate  $($fx1+$1*($fx2-$fx1))  $($fy1+$2*($fy2-$fy1))
+
+vform  2  ## TeoMacro ## write variable $1 with $2 decimal digits (FALOMO)
+                define _int (INT($$1))
+                define _dec ($$1-$_int)
+                define _dig (1.0*10**$2)
+                define _ext (INT($_dec*$_dig)/$_dig)
+
+                define _rou (($_dec-$_ext)*$_dig)
+        
+                if($_rou >= 0.5) {define _ext ($_ext+1.0*10**(-$2)) }
+                define $1 ($_int+$_ext)
+
+    ##############################################################    
+posline  4   ## TeoMacro ##disegna una linea  esempio 0.1 0.2 0.3 0.2
+         poslab $1 $2
+     draw $($fx1+$3*($fx2-$fx1))  $($fy1+$4*($fy2-$fy1))

@@ -1,0 +1,96 @@
+setfit verbose 1
+setfit scheme rnd_search+gradient
+setfit precision 1e-3,1e-6
+setfit niter 50,500
+setfit cloud_points 100
+inp setfit
+
+modsel SIproject::gaussian_2D
+modset xc 64
+modmin xc 54
+modmax xc 74
+modset yc 64
+modmin yc 54
+modmax yc 74
+modset xcell 15
+modset ycell 15
+modset bmin 0
+modset bmaj 0
+modmin peak 1e-6
+modmax peak 1e30
+modset peak 10000
+modset fwhm_min -1
+modmin fwhm_maj 30
+modmax fwhm_maj 80
+modset fwhm_maj 50
+modset pa 0
+modfix fwhm_min
+modfree fwhm_maj
+modfix pa
+modfree peak
+modinp
+
+SIproject::fit_2D_gauss
+subim ""
+rms 0
+inp
+
+foreach f ( 0) {
+
+scube::calib
+Interpol ""
+feed $f
+infile PERSEUS_K.SCUBE
+calsteps solve_counts_to_jansky
+counts_to_jansky_scheme fit_image
+
+in2files ""
+stokes LL
+calsources 3C286 3C286 3C286
+in2files += CALIB/3C286_FEED$f_LL_CROSS01.FITS
+in2files += CALIB/3C286_FEED$f_LL_CROSS02.FITS
+in2files += CALIB/3C286_FEED$f_LL_CROSS03.FITS
+# Bad?
+# in2files += CALIB/3C286_FEED$f_LL_CROSS04.FITS
+
+inp; go
+
+in2files ""
+stokes RR
+calsources 3C286 3C286 3C286
+in2files += CALIB/3C286_FEED$f_RR_CROSS01.FITS
+in2files += CALIB/3C286_FEED$f_RR_CROSS02.FITS
+in2files += CALIB/3C286_FEED$f_RR_CROSS03.FITS
+# Bad?
+# in2files += CALIB/3C286_FEED$f_RR_CROSS04.FITS
+inp; go
+}
+
+foreach f (1 2 3 4 5 6) {
+scube::calib
+Interpol ""
+feed $f
+infile PERSEUS_K.SCUBE
+calsteps solve_counts_to_jansky
+counts_to_jansky_scheme fit_image
+
+in2files ""
+stokes LL
+calsources 3C286 3C286 3C286
+in2files CALIB/3C286_FEED$f_LL_CROSS01.FITS
+in2files += CALIB/3C286_FEED$f_LL_CROSS02.FITS
+in2files += CALIB/3C286_FEED$f_LL_CROSS03.FITS
+# Bad?
+# in2files += CALIB/3C286_FEED$f_LL_CROSS04.FITS
+inp; go
+
+in2files ""
+stokes RR
+calsources 3C286 3C286 3C286
+in2files CALIB/3C286_FEED$f_RR_CROSS01.FITS
+in2files += CALIB/3C286_FEED$f_RR_CROSS02.FITS
+in2files += CALIB/3C286_FEED$f_RR_CROSS03.FITS
+# Bad?
+# in2files += CALIB/3C286_FEED$f_RR_CROSS04.FITS
+inp; go
+}
